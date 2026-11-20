@@ -1,4 +1,4 @@
-package com.givfnz.moneymanager.model;
+package com.givfnz.moneymanager.model.entities;
 
 import java.util.UUID;
 
