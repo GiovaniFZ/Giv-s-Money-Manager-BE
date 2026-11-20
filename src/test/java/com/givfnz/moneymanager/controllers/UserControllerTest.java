@@ -30,7 +30,7 @@ class UserControllerTest {
     private PasswordService passwordService;
 
     @InjectMocks
-    private UserController userController;
+    private CreateUserController userController;
 
     @Test
     void shouldCreateUser() {

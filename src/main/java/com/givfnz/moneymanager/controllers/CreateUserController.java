@@ -14,27 +14,37 @@ import org.springframework.web.bind.annotation.RequestBody;
 
 @RestController
 @RequestMapping(value = "/api/user")
-public class UserController {
+public class CreateUserController {
     private UserRepository userRepository;
     private PasswordService passwordService;
 
-    public UserController(UserRepository userRepository, PasswordService passwordService) {
+    public CreateUserController(UserRepository userRepository, PasswordService passwordService) {
         this.userRepository = userRepository;
         this.passwordService = passwordService;
     }
 
     @PostMapping("/register")
-    public ResponseEntity registerUser(@RequestBody UserModel userRequest) {
+    public ResponseEntity<UserModel> registerUser(@RequestBody UserModel userRequest) {    
+        verifyIfUserAlreadyExists(userRequest);
+        hashUserPassword(userRequest);
+        createUser(userRequest);
+        return ResponseEntity.status(HttpStatus.CREATED).build();
+    }
+
+    private void verifyIfUserAlreadyExists(UserModel userRequest) {
         var user = this.userRepository.findByEmail(userRequest.getEmail());
         if (user != null) {
             throw new ResponseStatusException(HttpStatus.CONFLICT, "User already exists");
         }
-    
+    }
+
+    private void hashUserPassword(UserModel userRequest) {
         var passwordHashed = passwordService.hash(userRequest.getPassword());
         userRequest.setPassword(passwordHashed);
-        
+    }
+
+    private void createUser(UserModel userRequest) {
         this.userRepository.save(userRequest);
-        return ResponseEntity.status(HttpStatus.CREATED).build();
     }
     
 }
