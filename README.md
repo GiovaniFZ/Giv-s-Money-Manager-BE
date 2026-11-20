@@ -1,0 +1,4 @@
+# Money Manager
+## Ideia
+Olá, esse é meu projeto principal com Java Spring Boot. Você já precisou ter que criar planilhas para controlar suas finanças? Pois é, com essa aplicação que estou desenvolvendo a ideia é facilitar esse controle. Não será mais preciso ficar toda vez abrindo a mesma planilha para controle de gastos. Basta fazer seu login no aplicativo e colocar as finanças desse mês. 
+É possível inclusive adicionar uma mesma finança para todos os meses, supondo que todo mês você receba um salário ou tenha sempre que pagar a mesma coisa. Daí quanto de dinheiro vai sobrar? Aqui que entra a ideia dessa aplicação: Tudo será calculado para você.
