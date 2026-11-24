@@ -1,4 +1,4 @@
-package com.givfnz.moneymanager.services.http;
+package com.givfnz.moneymanager.services.infra;
 
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
