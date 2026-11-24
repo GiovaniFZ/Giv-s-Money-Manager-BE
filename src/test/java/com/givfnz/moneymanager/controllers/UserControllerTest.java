@@ -19,6 +19,7 @@ import org.springframework.web.server.ResponseStatusException;
 import com.givfnz.moneymanager.model.entities.UserModel;
 import com.givfnz.moneymanager.model.repositories.UserRepository;
 import com.givfnz.moneymanager.services.PasswordService;
+import com.givfnz.moneymanager.services.TokenService;
 
 @ExtendWith(MockitoExtension.class)
 class UserControllerTest {
@@ -28,6 +29,9 @@ class UserControllerTest {
 
     @Mock
     private PasswordService passwordService;
+
+    @Mock
+    private TokenService tokenService;
 
     @InjectMocks
     private UserController userController;
@@ -64,5 +68,44 @@ class UserControllerTest {
         assertEquals(HttpStatus.CONFLICT, exception.getStatusCode());
         verify(userRepository, never()).save(any(UserModel.class));
         verifyNoInteractions(passwordService);
+    }
+
+    @Test
+    void shouldLoginSuccessfully() {
+        var userRequest = new UserModel();
+        userRequest.setEmail("giovani@example.com");
+        userRequest.setPassword("plain-password");
+
+        var user = new UserModel();
+        user.setEmail(userRequest.getEmail());
+        user.setPassword("hashed-password");
+
+        when(userRepository.findByEmail(userRequest.getEmail())).thenReturn(user);
+        when(passwordService.matches(userRequest.getPassword(), user.getPassword())).thenReturn(true);
+        when(tokenService.generate(user)).thenReturn("jwt");
+
+        var response = userController.loginUser(userRequest);
+        assertEquals(HttpStatus.OK.value(), response.getStatusCode().value());
+    }
+
+    @Test
+    void shouldNotLoginWithWrongCredentials() {
+        var userRequest = new UserModel();
+        userRequest.setEmail("giovani@example.com");
+        userRequest.setPassword("plain-password");
+
+        var user = new UserModel();
+        user.setEmail(userRequest.getEmail());
+        user.setPassword("wrong-password");
+
+        when(userRepository.findByEmail(userRequest.getEmail())).thenReturn(user);
+        when(passwordService.matches(userRequest.getPassword(), user.getPassword())).thenReturn(false);
+
+        var exception = assertThrows(
+                ResponseStatusException.class,
+                () -> userController.loginUser(userRequest));
+
+        assertEquals(HttpStatus.BAD_REQUEST, exception.getStatusCode());
+        assertEquals("Password does not match.", exception.getReason());
     }
 }
