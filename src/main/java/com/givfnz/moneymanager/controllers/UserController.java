@@ -2,7 +2,6 @@ package com.givfnz.moneymanager.controllers;
 
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.algorithms.Algorithm;
-import com.auth0.jwt.exceptions.JWTCreationException;
 import com.givfnz.moneymanager.model.entities.UserModel;
 import com.givfnz.moneymanager.model.repositories.UserRepository;
 import com.givfnz.moneymanager.services.PasswordService;
@@ -12,8 +11,8 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.util.Map;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.server.ResponseStatusException;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -24,6 +23,8 @@ import org.springframework.web.bind.annotation.RequestBody;
 public class UserController {
     private UserRepository userRepository;
     private PasswordService passwordService;
+    @Value ("${jwt.secret}")
+    private String jwtSecret;
 
     public UserController(UserRepository userRepository, PasswordService passwordService) {
         this.userRepository = userRepository;
@@ -80,8 +81,7 @@ public class UserController {
     }
 
     private String generateJWT(UserModel user) {
-        var secret = System.getenv("JWT_SECRET");
-        Algorithm algorithm = Algorithm.HMAC256(secret);
+        Algorithm algorithm = Algorithm.HMAC256(jwtSecret);
         String token = JWT.create()
                 .withClaim("sub", user.getId().toString())
                 .withIssuer("auth0")
