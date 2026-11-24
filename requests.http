@@ -1,0 +1,19 @@
+@baseUrl = http://localhost:8080
+# @name registerUser
+POST {{baseUrl}}/api/user/register
+Content-Type: application/json
+
+{
+    "name": "Giovani",
+    "email": "giovanifinazzi@gmail.com",
+    "password": "12345678"
+}
+###
+# @name login
+POST {{baseUrl}}/api/user/login
+Content-Type: application/json
+
+{
+    "email": "giovanifinazzi@gmail.com",
+    "password": "12345678"
+}
